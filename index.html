@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>It's a Girl! 🎀</title>
+  <title>It's a !!! 🎀</title>
   <style>
     body {
       margin: 0;
@@ -152,11 +152,11 @@
     <div class="confetti">🎀🎀🎀</div>
     <div id="cat-area" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:10;"></div>
     <div id="party-bg" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:1;pointer-events:none;overflow:hidden;">
-      <img src="party.gif" alt="party" style="width:100vw;height:100vh;object-fit:cover;">
+      <img src="https://mmrvega.github.io/gender-reveal-v3ga/party.gif" alt="party" style="width:100vw;height:100vh;object-fit:cover;">
     </div>
-    <audio id="partywhistle-audio" src="partywisle.mp3" preload="auto"></audio>
-    <audio id="count-audio" src="coount.mp3" preload="auto"></audio>
-    <audio id="bg-audio" src="pbg2.mp3" preload="auto" loop></audio>
+    <audio id="partywhistle-audio" src="https://mmrvega.github.io/gender-reveal-v3ga/partywisle.mp3" preload="auto"></audio>
+    <audio id="count-audio" src="https://mmrvega.github.io/gender-reveal-v3ga/coount.mp3" preload="auto"></audio>
+    <audio id="bg-audio" src="https://mmrvega.github.io/gender-reveal-v3ga/pbg2.mp3" preload="auto" loop></audio>
     </div>
   <script>
     function showCats() {
@@ -164,7 +164,7 @@
       catArea.innerHTML = '';
       for (let i = 0; i < 12; i++) {
         const cat = document.createElement('img');
-        cat.src = 'cat.gif';
+        cat.src = 'https://mmrvega.github.io/gender-reveal-v3ga/cat.gif';
         cat.style.position = 'absolute';
         cat.style.left = (Math.random() * 80 + 10) + 'vw';
         cat.style.bottom = '0px';
@@ -234,7 +234,7 @@
           // Restart the GIF by replacing the src
           partyImg.src = '';
           setTimeout(() => {
-            partyImg.src = 'party.gif';
+            partyImg.src = 'https://mmrvega.github.io/gender-reveal-v3ga/party.gif';
           }, 20);
           showCats();
           partyAudio.currentTime = 0;

@@ -9,7 +9,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #888;
+      background: url('https://mmrvega.github.io/gender-reveal-v3ga/revealbg.jpg') center center/cover no-repeat fixed;
       color: #fff;
       text-align: center;
       transition: background 1s;
@@ -140,16 +140,54 @@
       width: 18px;
       height: 45px;
     }
+    #loading-overlay {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: #fff;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.5s;
+    }
+    #loading-bar-bg {
+      width: 300px;
+      height: 24px;
+      background: #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px #0002;
+    }
+    #loading-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #8ec6ff 0%, #ffc0cb 100%);
+      transition: width 0.3s;
+    }
+    #loading-text {
+      color: #ff69b4;
+      font-size: 2em;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎉 Gender Reveal Party 🎉</h1>
-    <div class="confetti">🎀🎀🎀</div>
+  <div id="loading-overlay">
+    <div id="loading-text">Loading...</div>
+    <div id="loading-bar-bg">
+      <div id="loading-bar"></div>
+    </div>
+  </div>
+  <div class="container" style="display:none;">
+    <h1>🎉 Gender Reveal 🎉</h1>
+    <div class="confetti">🩵🩵🩵</div>
     <button class="reveal-btn" id="reveal-btn">Reveal!</button>
     <div id="countdown" style="font-size:8em;font-weight:bold;margin:20px 0;display:none;color:#0000ff;"></div>
     <div id="reveal-msg" class="reveal" style="display:none;">It's a <strong>GIRL!</strong> 💖</div>
-    <div class="confetti">🎀🎀🎀</div>
+    <div class="confetti">🩷🩷🩷</div>
     <div id="cat-area" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:10;"></div>
     <div id="party-bg" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:1;pointer-events:none;overflow:hidden;">
       <img src="https://mmrvega.github.io/gender-reveal-v3ga/party.gif" alt="party" style="width:100vw;height:100vh;object-fit:cover;">
@@ -159,12 +197,51 @@
     <audio id="bg-audio" src="https://mmrvega.github.io/gender-reveal-v3ga/pbg2.mp3" preload="auto" loop></audio>
     </div>
   <script>
+    // Loading bar logic
+    (function() {
+      var overlay = document.getElementById('loading-overlay');
+      var bar = document.getElementById('loading-bar');
+      var container = document.querySelector('.container');
+      var progress = 0;
+      var fakeInterval = setInterval(function() {
+        progress += Math.random() * 20;
+        if (progress > 90) progress = 90;
+        bar.style.width = progress + '%';
+      }, 200);
+
+      function finishLoading() {
+        clearInterval(fakeInterval);
+        bar.style.width = '100%';
+        setTimeout(function() {
+          overlay.style.opacity = '0';
+          setTimeout(function() {
+            overlay.style.display = 'none';
+            container.style.display = '';
+          }, 500);
+        }, 400);
+      }
+
+      if (document.readyState === 'complete') {
+        finishLoading();
+      } else {
+        window.addEventListener('load', finishLoading);
+      }
+    })();
+
     function showCats() {
       const catArea = document.getElementById('cat-area');
       catArea.innerHTML = '';
+      // Array of cat gifs (add more URLs as needed)
+      const catGifs = [
+        'https://mmrvega.github.io/gender-reveal-v3ga/cat.gif',
+        'https://mmrvega.github.io/gender-reveal-v3ga/cat2.gif',
+        'https://mmrvega.github.io/gender-reveal-v3ga/cat3.gif',
+        'https://mmrvega.github.io/gender-reveal-v3ga/cat4.gif'
+      ];
       for (let i = 0; i < 12; i++) {
         const cat = document.createElement('img');
-        cat.src = 'https://mmrvega.github.io/gender-reveal-v3ga/cat.gif';
+        // Pick a random cat gif
+        cat.src = catGifs[Math.floor(Math.random() * catGifs.length)];
         cat.style.position = 'absolute';
         cat.style.left = (Math.random() * 80 + 10) + 'vw';
         cat.style.bottom = '0px';
@@ -178,7 +255,7 @@
         cat.addEventListener('animationend', () => {
           cat.remove();
           const pop = document.createElement('div');
-          pop.textContent = '😺';
+          pop.textContent = '🫶🥹';
           pop.style.position = 'absolute';
           pop.style.left = cat.style.left;
           pop.style.top = '10vh';

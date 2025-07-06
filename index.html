@@ -9,9 +9,13 @@
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom right, #ffe6f0, #ffc0cb);
+      background: #888;
       color: #fff;
       text-align: center;
+      transition: background 1s;
+    }
+    body.revealed {
+      background: linear-gradient(to bottom right, #ffe6f0, #ffc0cb);
     }
     .container {
       padding: 50px 20px;
@@ -22,7 +26,7 @@
     }
     .reveal {
       background-color: #fff;
-      color: #ff69b4;
+      color: #000000;
       padding: 20px;
       margin: 30px auto;
       border-radius: 20px;
@@ -35,6 +39,20 @@
       font-size: 3em;
       margin: 20px 0;
     }
+    .reveal-btn {
+      background: #000000;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin: 20px 0;
+      transition: background 0.2s;
+    }
+    .reveal-btn:hover {
+      background: #000000;
+    }
     @keyframes pop {
       0% { transform: scale(0); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -44,15 +62,209 @@
       font-size: 0.9em;
       color: #fff5f5;
     }
+    .balloon {
+      display: none;
+      position: absolute;
+      transform: translateX(-50%);
+      bottom: 30px;
+      width: 60px;
+      height: 110px;
+      z-index: 10;
+      animation: balloon-up 5s ease-in forwards;
+    }
+    .balloon.show {
+      display: block;
+    }
+    @keyframes balloon-up {
+      0% { bottom: 30px; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { bottom: 100vh; opacity: 0; transform: scale(0.1); }
+    }
+    .balloon-shape {
+      width: 60px;
+      height: 85px;
+      background: #ff69b4;
+      border-radius: 50% 50% 45% 45% / 55% 55% 60% 60%;
+      position: relative;
+      box-shadow: 0 8px 24px 2px rgba(0,0,0,0.18), 0 2px 8px 0 rgba(0,0,0,0.10) inset;
+      overflow: visible;
+    }
+    .balloon-highlight {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      width: 16px;
+      height: 28px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+      filter: blur(0.5px);
+      transform: rotate(-18deg);
+      pointer-events: none;
+    }
+    .balloon-shadow {
+      position: absolute;
+      left: 10px;
+      bottom: 8px;
+      width: 40px;
+      height: 12px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 50%;
+      filter: blur(1.5px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .balloon-knot {
+      width: 14px;
+      height: 12px;
+      background: #ff69b4;
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      transform: translateX(-50%) rotate(25deg);
+      border-radius: 60% 60% 80% 80% / 80% 80% 60% 60%;
+      border-bottom: 2px solid #d94f8a;
+      z-index: 2;
+    }
+    .balloon-string {
+      position: absolute;
+      left: 50%;
+      top: 85px;
+      width: 2px;
+      height: 45px;
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+    .balloon-string svg {
+      display: block;
+      width: 18px;
+      height: 45px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎉 Gender Reveal Party 🎉</h1>
     <div class="confetti">🎀🎀🎀</div>
-    <div class="reveal">It's a <strong>GIRL!</strong> 💖</div>
+    <button class="reveal-btn" id="reveal-btn">Reveal!</button>
+    <div id="countdown" style="font-size:8em;font-weight:bold;margin:20px 0;display:none;color:#0000ff;"></div>
+    <div id="reveal-msg" class="reveal" style="display:none;">It's a <strong>GIRL!</strong> 💖</div>
     <div class="confetti">🎀🎀🎀</div>
-    <p class="footer">Thank you for sharing this special moment with us 💕</p>
-  </div>
+    <div id="cat-area" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:10;"></div>
+    <div id="party-bg" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:1;pointer-events:none;overflow:hidden;">
+      <img src="party.gif" alt="party" style="width:100vw;height:100vh;object-fit:cover;">
+    </div>
+    <audio id="partywhistle-audio" src="partywisle.mp3" preload="auto"></audio>
+    <audio id="count-audio" src="coount.mp3" preload="auto"></audio>
+    <audio id="bg-audio" src="pbg2.mp3" preload="auto" loop></audio>
+    </div>
+  <script>
+    function showCats() {
+      const catArea = document.getElementById('cat-area');
+      catArea.innerHTML = '';
+      for (let i = 0; i < 12; i++) {
+        const cat = document.createElement('img');
+        cat.src = 'cat.gif';
+        cat.style.position = 'absolute';
+        cat.style.left = (Math.random() * 80 + 10) + 'vw';
+        cat.style.bottom = '0px';
+        cat.style.width = '80px';
+        cat.style.height = '80px';
+        cat.style.zIndex = Math.floor(Math.random() * 10) + 5;
+        cat.style.animation = `cat-up 5s ease-in forwards`;
+        cat.style.animationDelay = (Math.random() * 1.5) + 's';
+        catArea.appendChild(cat);
+
+        cat.addEventListener('animationend', () => {
+          cat.remove();
+          const pop = document.createElement('div');
+          pop.textContent = '😺';
+          pop.style.position = 'absolute';
+          pop.style.left = cat.style.left;
+          pop.style.top = '10vh';
+          pop.style.fontSize = '2em';
+          pop.style.opacity = '1';
+          pop.style.transition = 'opacity 0.5s ease-out';
+          catArea.appendChild(pop);
+          setTimeout(() => pop.style.opacity = '0', 100);
+          setTimeout(() => pop.remove(), 700);
+        });
+      }
+    }
+
+    // Add cat-up animation
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes cat-up {
+        0% { bottom: 0px; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { bottom: 100vh; opacity: 0; transform: scale(0.1);}
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Countdown and reveal logic
+    document.getElementById('reveal-btn').onclick = function() {
+      var countdown = document.getElementById('countdown');
+      var revealMsg = document.getElementById('reveal-msg');
+      var revealBtn = document.getElementById('reveal-btn');
+      var partyAudio = document.getElementById('partywhistle-audio');
+      var countAudio = document.getElementById('count-audio');
+      var partyBg = document.getElementById('party-bg');
+      var partyImg = partyBg.querySelector('img');
+      countdown.style.display = 'block';
+      revealBtn.style.display = 'none';
+      revealMsg.style.display = 'none';
+      let n = 10;
+      countdown.textContent = n;
+      // Play count audio at start of countdown
+      countAudio.currentTime = 0;
+      countAudio.play();
+      let timer = setInterval(function() {
+        n--;
+        if (n > 0) {
+          countdown.textContent = n;
+        } else {
+          clearInterval(timer);
+          countdown.style.display = 'none';
+          revealMsg.style.display = 'block';
+          document.body.classList.add('revealed');
+          partyBg.style.display = 'block';
+          // Restart the GIF by replacing the src
+          partyImg.src = '';
+          setTimeout(() => {
+            partyImg.src = 'party.gif';
+          }, 20);
+          showCats();
+          partyAudio.currentTime = 0;
+          partyAudio.play();
+
+          // Hide the GIF after two loops (if party.gif is 1 loop = X ms, set timeout to 2*X)
+          // You may need to adjust 4000 to match your GIF's duration
+          setTimeout(() => {
+            partyBg.style.display = 'none';
+          }, 2000 * 2);
+        }
+      }, 1000);
+    };
+
+    // Play looping background audio on first user interaction (required by browsers)
+    function enableBgAudio() {
+      var bgAudio = document.getElementById('bg-audio');
+      bgAudio.volume = 0.5;
+      bgAudio.play().catch(()=>{});
+      // Remove only after successful play
+      window.removeEventListener('click', enableBgAudio);
+      window.removeEventListener('keydown', enableBgAudio);
+      window.removeEventListener('touchstart', enableBgAudio);
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      // Attach to first user interaction for autoplay policy
+      window.addEventListener('click', enableBgAudio, { once: true });
+      window.addEventListener('keydown', enableBgAudio, { once: true });
+      window.addEventListener('touchstart', enableBgAudio, { once: true });
+    });
+  </script>
 </body>
 </html>
